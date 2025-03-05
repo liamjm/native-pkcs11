@@ -13,6 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+if [ ! -d $NATIVE_PKCS11_TMPDIR ]; then
+  echo "Directory $NATIVE_PKCS11_TMPDIR does not exist. Aborting."
+fi
+
 readonly CLIENT_P12_PASS='hunter2'
 readonly SUBJ='/C=US/ST=California/L=San Francisco/O=Google LLC'
 
@@ -20,8 +24,8 @@ readonly CLIENT_CERT=$NATIVE_PKCS11_TMPDIR/client.cer
 readonly CLIENT_CSR=$NATIVE_PKCS11_TMPDIR/client.csr
 readonly CLIENT_KEY=$NATIVE_PKCS11_TMPDIR/client.key
 readonly CLIENT_P12=$NATIVE_PKCS11_TMPDIR/client.p12
-readonly CLIENT_ROOT_CERT=$NATIVE_PKCS11_TMPDIR/client_root.cer
-readonly CLIENT_ROOT_KEY=$NATIVE_PKCS11_TMPDIR/client_root.key
+CLIENT_ROOT_CERT=$NATIVE_PKCS11_TMPDIR/client_root.cer
+CLIENT_ROOT_KEY=$NATIVE_PKCS11_TMPDIR/client_root.key
 readonly SERVER_CERT=$NATIVE_PKCS11_TMPDIR/server.cer
 readonly SERVER_CSR=$NATIVE_PKCS11_TMPDIR/server.csr
 readonly SERVER_KEY=$NATIVE_PKCS11_TMPDIR/server.key
@@ -65,5 +69,5 @@ openssl x509 -req -CAkey "$CLIENT_ROOT_KEY" -CA "$CLIENT_ROOT_CERT" \
 openssl pkcs12 -export -in "$CLIENT_CERT" -inkey "$CLIENT_KEY" \
   -certfile "$CLIENT_ROOT_CERT" -out "$CLIENT_P12" -passout pass:$CLIENT_P12_PASS
 
-security import "$CLIENT_P12" -k "$NATIVE_PKCS11_KEYCHAIN_PATH" -P \
-  $CLIENT_P12_PASS -A
+# security import "$CLIENT_P12" -k "$NATIVE_PKCS11_KEYCHAIN_PATH" -P \
+#   $CLIENT_P12_PASS -A
