@@ -153,22 +153,14 @@ impl ObjectStore {
 
     fn find_with_backend_all_certificates(&mut self) -> Result<()> {
         for cert in backend().find_all_certificates()? {
-            let private_key = backend().find_private_key(KeySearchOptions::PublicKeyHash(
-                cert.public_key().public_key_hash().as_slice().try_into()?,
-            ))?;
-            //  Check if certificate has an associated PrivateKey.
-            match private_key {
-                Some(key) => key,
-                None => continue,
-            };
             self.insert(Object::Certificate(cert.into()));
         }
         Ok(())
     }
 
     fn find_with_backend_all_public_keys(&mut self) -> Result<()> {
-        for private_key in backend().find_all_private_keys()? {
-            self.insert(Object::PrivateKey(private_key));
+        for public_key in backend().find_all_public_keys()? {
+            self.insert(Object::PublicKey(public_key));
         }
         Ok(())
     }
